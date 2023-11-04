@@ -1,24 +1,25 @@
 <script>
-    let fyear = "2023/24";
+// @ts-nocheck
+import { page } from '$app/stores'
+    let fyear = 2023;
     let months = [
-        {name:"Jul", index:7, year:2023},
-        {name:"Aug", index:8, year:2023},
-        {name:"Sep", index:9, year:2023},
-        {name:"Oct", index:10, year:2023},
-        {name:"Nov", index:11, year:2023},
-        {name:"Dec", index:12, year:2023},
-        {name:"Jan", index:1, year:2024},
-        {name:"Feb", index:2, year:2024},
-        {name:"Mar", index:3, year:2024},
-        {name:"Apr", index:4, year:2024},
-        {name:"May", index:5, year:2024},
-        {name:"Jun", index:6, year:2024}]
+        {name:"Jul", index:7, year:fyear},
+        {name:"Aug", index:8, year:fyear},
+        {name:"Sep", index:9, year:fyear},
+        {name:"Oct", index:10, year:fyear},
+        {name:"Nov", index:11, year:fyear},
+        {name:"Dec", index:12, year:fyear},
+        {name:"Jan", index:1, year:fyear+1},
+        {name:"Feb", index:2, year:fyear+1},
+        {name:"Mar", index:3, year:fyear+1},
+        {name:"Apr", index:4, year:fyear+1},
+        {name:"May", index:5, year:fyear+1},
+        {name:"Jun", index:6, year:fyear+1}]
     let days =  [...Array(31).keys()].map(x => x+1);
 
     let wfhDays = [];
 
-
-    const dayName = (d,m,y) => {
+    const dayName = (d, m, y) => {
         const name = ["sun","mon","tue","wed","thu","fri","sat"]
         const date = new Date(y,m-1,d);
         if (date.getMonth() != m-1) return "---";
@@ -26,21 +27,28 @@
     }
 
     const handleClick = (mon, day) => {
-        //wfhDays.push({ day: day, month: mon.index, year: mon.year});
-        wfhDays = [...wfhDays,{ day: day, month: mon.index, year: mon.year}]
-        console.log(mon);
-        console.log(day);
-        console.log("Clicked it!");
+        const i = wfhDays.findIndex(x => x.day == day && x.month == mon.index && x.year == mon.year);
+        if (i>=0) {
+            wfhDays.splice(i,1);
+            wfhDays = [...wfhDays];
+        } else {
+            wfhDays = [...wfhDays,{ day: day, month: mon.index, year: mon.year}]
+        }
     }
 
     const getClass = (d,m,y) => {
-        // const index = wfhDays.findIndex(x => x.day == d && x.month == m && x.year == y);
-        // console.log("in getClass");
-        // console.log(index);
-        return (wfhDays.findIndex(x => x.day == d && x.month == m && x.year == y) > 0) ? "home" : "office";
+        const weekday = dayName(d,m,y);
+        if (weekday === "sun" || weekday === "sat")
+            return "weekend";
+        if (weekday === "---")
+            return "none";
+
+        return "office";
     }
+    console.log($page.data.session);
 </script>
-<h1>WFH Calendar for financial year {fyear}</h1>
+<h1>WFH Calendar for financial year {fyear}/{(fyear+1)-2000}</h1>
+<h2>Total hours WFH: {wfhDays.length * 7.6}</h2>
 <table >
     <thead>
         <td>Day</td>
@@ -53,7 +61,7 @@
         <tr>
             <td>{d}</td>
             {#each months as month }
-            <td class="{(wfhDays.findIndex(x => x.day == d && x.month == month.index && x.year == month.year) > 0) ? "home" : "office"}" on:click={(x) => handleClick(month, d)}>{dayName(d,month.index,month.year)}</td>
+            <td class="{(wfhDays.findIndex(x => x.day == d && x.month == month.index && x.year == month.year) >= 0) ? "home" : getClass(d,month.index,month.year)}" on:click={(x) => handleClick(month, d)}>{dayName(d,month.index,month.year)}</td>
             {/each} 
         </tr>
         {/each}     
@@ -66,13 +74,16 @@ table, td {
   border-collapse: collapse;
 }
 .office {
-    background-color: blue;
+    background-color:lightblue
 }
 .home {
     background-color: green;
 }
 .none {
     background-color: white;
+}
+.weekend {
+    background-color:dimgray
 }
 td {width: 100px;}
 </style>

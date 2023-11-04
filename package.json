@@ -26,5 +26,10 @@
 		"vite": "^4.4.2",
 		"vitest": "^0.34.0"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@auth/core": "^0.18.0",
+		"@auth/sveltekit": "^0.3.11",
+		"better-sqlite3": "^9.0.0"
+	}
 }
