@@ -1,1 +1,1 @@
-create table dates(day integer, month integer, year integer, user text)
+create table dates(day integer, month integer, year integer, user text, fyear integer)
