@@ -6,7 +6,7 @@ import {
 } from '$env/static/private';
 
 
-throw new Error(`ClientId:${GOOGLE_CLIENT_ID}`);
+throw new Error(`ClientId:${GOOGLE_CLIENT_SECRET}`);
 
 export const handle = SvelteKitAuth({
  providers: [GoogleProvider({ clientId: GOOGLE_CLIENT_ID, clientSecret: GOOGLE_CLIENT_SECRET })]
