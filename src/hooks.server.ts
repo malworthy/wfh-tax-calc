@@ -5,10 +5,6 @@ import {
  GOOGLE_CLIENT_SECRET,
 } from '$env/static/private';
 
-// export const handle = SvelteKitAuth({
-//  providers: [GoogleProvider({ clientId: GOOGLE_CLIENT_ID, clientSecret: GOOGLE_CLIENT_SECRET })]
-// });
-
 export const handle = SvelteKitAuth({
-    providers: [GoogleProvider({ clientId: GOOGLE_CLIENT_ID, clientSecret: "incorrect" })]
-   });
+ providers: [GoogleProvider({ clientId: GOOGLE_CLIENT_ID, clientSecret: GOOGLE_CLIENT_SECRET })]
+});
