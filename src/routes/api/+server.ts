@@ -1,4 +1,4 @@
-/*import { json, error } from "@sveltejs/kit"
+import { json, error } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types"
 import {
   MONGO_CS,
@@ -50,5 +50,3 @@ export async function POST({request, locals }) {
   
 	return json(arr);
 }
-
-*/

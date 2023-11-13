@@ -30,12 +30,12 @@ import { onMount } from "svelte";
     });
 
     const loadData = async () => {
-        // const response = await fetch(`/api?fyear=${fyear}`);
-        // const result = await response.json();
-        // console.log(result);
-        // wfhDays = result;
+        const response = await fetch(`/api?fyear=${fyear}`);
+        const result = await response.json();
+        console.log(result);
+        wfhDays = result;
 
-        wfhDays = [];
+        //wfhDays = [];
     }
 
     const dayName = (d, m, y) => {
@@ -45,7 +45,7 @@ import { onMount } from "svelte";
         return name[date.getDay()];
     }
 
-    const handleClick2 = (mon, day) => {
+    const handleClick_old = (mon, day) => {
         const i = wfhDays.findIndex(x => x.day == day && x.month == mon.index && x.year == mon.year);
         if (i>=0) {
             wfhDays.splice(i,1);
@@ -55,7 +55,7 @@ import { onMount } from "svelte";
         }
     }
 
-    const handleClick = async (mon, day) =>  {
+    const handleClick2 = async (mon, day) =>  {
         const response = await fetch("/api", {
             method: "POST", // or 'PUT'
             headers: {
