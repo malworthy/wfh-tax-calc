@@ -20,22 +20,23 @@ import { onMount } from "svelte";
     let days =  [...Array(31).keys()].map(x => x+1);
 
     let wfhDays = [];
+    let timestamp = null;
+    let scheduleCount = 0;
 
     onMount(async () =>  {
-        // const response = await fetch(`/api?fyear=${fyear}`);
-        // const result = await response.json();
-        // console.log(result);
-        // wfhDays = result;
         await loadData();
     });
+
+    const fyearChange = async () => {
+        await save();
+        await loadData();
+    }
 
     const loadData = async () => {
         const response = await fetch(`/api?fyear=${fyear}`);
         const result = await response.json();
-        console.log(result);
+        //console.log(result);
         wfhDays = result;
-
-        //wfhDays = [];
     }
 
     const dayName = (d, m, y) => {
@@ -45,30 +46,58 @@ import { onMount } from "svelte";
         return name[date.getDay()];
     }
 
-    const handleClick_old = (mon, day) => {
+    const handleClick = (mon, day) => {
         const i = wfhDays.findIndex(x => x.day == day && x.month == mon.index && x.year == mon.year);
         if (i>=0) {
-            wfhDays.splice(i,1);
+            //wfhDays.splice(i,1);
+            wfhDays[i].hasChanged = true;
+            wfhDays[i].status = (wfhDays[i].status == 0) ? 1 : 0;
             wfhDays = [...wfhDays];
         } else {
-            wfhDays = [...wfhDays,{ day: day, month: mon.index, year: mon.year}]
+            wfhDays = [...wfhDays,{ day: day, month: mon.index, year: mon.year, fyear: fyear, hasChanged: true, status:1}]
+        }
+
+        //queue to save
+        const current = new Date();
+        if (timestamp == null || (current - timestamp) < 1000) {
+            timestamp = new Date();
+            scheduleCount++;
+            setTimeout(() => save(), 5000);
         }
     }
 
-    const handleClick2 = async (mon, day) =>  {
+    const save = async () => {
+        const toSave = wfhDays.filter(x => x.hasChanged);
         const response = await fetch("/api", {
             method: "POST", // or 'PUT'
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ day: day, month: mon.index, year: mon.year, fyear: fyear}),
+            body: JSON.stringify(toSave),
         });
         const result = await response.json();
-        console.log(result);
-        wfhDays = result;
+        //console.log("Save completed");
+        //console.log(result);
+        scheduleCount--;
+        timestamp = null;
     }
 
-    const getClass = (d,m,y) => {
+    const calcHours = (arr) => {
+        return (arr.filter(x => x.status === undefined || x.status == 1).length * 7.6).toFixed(1)
+    }
+
+    const getClass = (d,m,y, arr) => {
+        const index = arr.findIndex(x => x.day == d && x.month == m && x.year == y);
+        //console.log(index);
+        if (index >=0) {
+            //console.log("index greater than one");
+            const row = arr[index];
+            //console.log(row);
+            if (row.status===undefined || row.status == 1) {
+                //console.log("class is home");
+                return "home";
+            }
+        }
         const weekday = dayName(d,m,y);
         if (weekday === "sun" || weekday === "sat")
             return "weekend";
@@ -83,11 +112,11 @@ import { onMount } from "svelte";
     <nav class="navbar sticky-top bg-secondary">
         <div class="container-fluid">
             <p class="navbar-brand">WFH Calendar for financial year {fyear}/{(fyear+1)-2000}</p>
-            <p class="navbar-text">Total hours WFH: {(wfhDays.length * 7.6).toFixed(1)}</p>
+            <p class="navbar-text">Total hours WFH: {calcHours(wfhDays)}</p>
             <p class="navbar-text">User: {$page.data.session.user.name}</p>
             <form class="d-flex" role="search">
 
-            <input on:change={loadData} bind:value={fyear} class="form-control me-2" type="number" placeholder="Financial year" aria-label="Financial year">
+            <input on:change={fyearChange} bind:value={fyear} class="form-control me-2" type="number" placeholder="Financial year" aria-label="Financial year">
             </form>
 
 
@@ -106,7 +135,7 @@ import { onMount } from "svelte";
             <tr>
                 <td>{d}</td>
                 {#each months as month }
-                <td class="{(wfhDays.findIndex(x => x.day == d && x.month == month.index && x.year == month.year) >= 0) ? "home" : getClass(d,month.index,month.year)}" on:click={(x) => handleClick2(month, d)}>{dayName(d,month.index,month.year)}</td>
+                <td class="{getClass(d,month.index,month.year, wfhDays)}" on:click={(x) => handleClick(month, d)}>{dayName(d,month.index,month.year)}</td>
                 {/each} 
             </tr>
             {/each}     
