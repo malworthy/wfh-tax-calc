@@ -1,42 +1,13 @@
-# to manage google auth
+# WFH Tax Calculator
+
+A very simple program to log the days you work from home
+
+- Log in using your google credentials
+- Click on the days you work from home
+- Still a work in progress - alpha release
+- A 7.6 hour work day is assumed
+- Uses Australian Financial year (1st July to 30th June)
+
+### to manage google auth
 
 https://console.cloud.google.com/apis/credentials
-
-# create-svelte
-
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
