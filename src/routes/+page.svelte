@@ -119,86 +119,71 @@
 	console.log($page.data.session);
 </script>
 
-<div class="container">
-	<div class="pb-5">
-		<nav class="navbar fixed-top bg-secondary">
-			<div class="container-fluid">
-				<p class="navbar-brand">
-					WFH Calendar for financial year: {fyear}/{fyear + 1 - 2000}
-				</p>
-				<p class="navbar-text">Total hours WFH: {calcHours(wfhDays)}</p>
-				<p class="navbar-text">User: {$page.data.session.user.name}</p>
-				<div class="d-flex">
-					<input
-						on:change={fyearChange}
-						bind:value={fyear}
-						class="form-control me-2"
-						type="number"
-						placeholder="Financial year"
-						aria-label="Financial year"
-					/>
-					<a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">
-						<img width="32" height="32" src="cog-setting.png" alt="Settings" />
-					</a>
-				</div>
-			</div>
+<div>
+	<div>
+		<nav class="tui-nav fixed">
+			<ul>
+				<li class="tui-dropdown">
+					<span class="red-168-text">F</span>ile
+					<div class="tui-dropdown-content">
+						<ul>
+							<li>
+								<a class="tui-modal-button" data-modal="modal" href="#!"
+									><span data-modal="modal" class="tui-modal-button red-168-text">S</span>ettings</a
+								>
+							</li>
+						</ul>
+					</div>
+				</li>
+				<li>
+					<div class="center">Total hours WFH: {calcHours(wfhDays)}</div>
+				</li>
+				<li class="right">User: {$page.data.session.user.name}</li>
+			</ul>
 		</nav>
 	</div>
-	<div class="container pt-5">
-		<table>
-			<thead>
-				<td>Day</td>
-				{#each months as month}
-					<td>{month.name}</td>
-				{/each}
-			</thead>
-			<tbody>
-				{#each days as d}
-					<tr>
-						<td>{d}</td>
+	<div class="center">
+		<div class="tui-window" style="margin-top: 40px;">
+			<fieldset class="tui-fieldset">
+				<legend class="center">{fyear}/{fyear + 1 - 2000}</legend>
+				<table>
+					<thead>
+						<td>Day</td>
 						{#each months as month}
-							<td
-								class={getClass(d, month.index, month.year, wfhDays)}
-								on:click={(x) => handleClick(month, d)}>{dayName(d, month.index, month.year)}</td
-							>
+							<td>{month.name}</td>
 						{/each}
-					</tr>
-				{/each}
-			</tbody>
-		</table>
+					</thead>
+					<tbody>
+						{#each days as d}
+							<tr>
+								<td>{d}</td>
+								{#each months as month}
+									<td
+										class={getClass(d, month.index, month.year, wfhDays)}
+										on:click={(x) => handleClick(month, d)}
+										>{dayName(d, month.index, month.year)}</td
+									>
+								{/each}
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</fieldset>
+		</div>
 	</div>
 
-	<!-- Modal -->
-	<div
-		class="modal fade"
-		id="exampleModal"
-		tabindex="-1"
-		aria-labelledby="exampleModalLabel"
-		aria-hidden="true"
-	>
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1 class="modal-title fs-5" id="exampleModalLabel">Settings</h1>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-				</div>
-				<div class="modal-body">
-					<form>
-						<label for="hours" class="form-label">Standard work day (hours)</label>
-						<input
-							class="form-control me-2"
-							type="number"
-							min="0"
-							max="24"
-							bind:value={hoursPerDay}
-						/>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-					<!-- <button type="button" class="btn btn-primary">Save changes</button> -->
-				</div>
-			</div>
+	<!-- Overlap -->
+	<div class="tui-overlap" />
+
+	<!-- Modal window -->
+	<div id="modal" class="tui-modal">
+		<div class="tui-window red-168">
+			<fieldset class="tui-fieldset">
+				<legend class="red-255 yellow-255-text">Settings</legend>
+				<label for="hours">Standard work day (hours)</label>
+				<input class="tui-input" type="number" min="0" max="24" bind:value={hoursPerDay} />
+				<button class="tui-button tui-modal-close-button right" data-modal="modal">close</button>
+			</fieldset>
 		</div>
 	</div>
 </div>
@@ -210,16 +195,17 @@
 		border-collapse: collapse;
 	}
 	.office {
-		background-color: lightblue;
+		background-color: blue;
 	}
 	.home {
-		background-color: lightgreen;
+		background-color: green;
 	}
 	.none {
 		background-color: white;
 	}
 	.weekend {
-		background-color: lightgray;
+		background-color: #a8a8a8;
+		color: black;
 	}
 	td {
 		width: 100px;

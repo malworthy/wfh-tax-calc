@@ -33,6 +33,7 @@
 		"@auth/core": "^0.18.0",
 		"@auth/sveltekit": "^0.3.11",
 		"better-sqlite3": "^9.0.0",
-		"mongodb": "^6.2.0"
+		"mongodb": "^6.2.0",
+		"tuicss": "^2.1.2"
 	}
 }
