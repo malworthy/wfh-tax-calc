@@ -26,24 +26,26 @@
 	let days = [...Array(31).keys()].map((x) => x + 1);
 
 	let wfhDays = [];
+	let wfhDaysLy = [];
 	let timestamp = null;
 	let scheduleCount = 0;
 	let hoursPerDay = 7.6;
 
 	onMount(async () => {
-		await loadData();
+		wfhDays = await loadData(fyear);
+		wfhDaysLy = await loadData(fyear - 1);
 	});
 
 	const fyearChange = async () => {
 		await save();
-		await loadData();
+		wfhDays = await loadData(fyear);
 	};
 
-	const loadData = async () => {
-		const response = await fetch(`/api?fyear=${fyear}`);
+	const loadData = async (financialYear) => {
+		const response = await fetch(`/api?fyear=${financialYear}`);
 		const result = await response.json();
 		//console.log(result);
-		wfhDays = result;
+		return result;
 	};
 
 	const dayName = (d, m, y) => {
@@ -137,6 +139,9 @@
 				</li>
 				<li>
 					<div class="center">Total hours WFH: {calcHours(wfhDays)}</div>
+				</li>
+				<li>
+					<div class="center">Last Year: {calcHours(wfhDaysLy)}</div>
 				</li>
 				<li class="right">User: {$page.data.session.user.name}</li>
 			</ul>

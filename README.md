@@ -11,3 +11,7 @@ A very simple program to log the days you work from home
 ### to manage google auth
 
 https://console.cloud.google.com/apis/credentials
+
+### to run
+
+`npm run dev`
