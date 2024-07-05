@@ -8,8 +8,7 @@
 		return now > new Date(year, 6 - 1, 30) ? year : year - 1;
 	};
 
-	let fyear = getCurrentYear();
-	let months = [
+	const getMonths = () => [
 		{ name: 'Jul', index: 7, year: fyear },
 		{ name: 'Aug', index: 8, year: fyear },
 		{ name: 'Sep', index: 9, year: fyear },
@@ -23,6 +22,9 @@
 		{ name: 'May', index: 5, year: fyear + 1 },
 		{ name: 'Jun', index: 6, year: fyear + 1 }
 	];
+
+	let fyear = getCurrentYear();
+	let months = getMonths();
 	let days = [...Array(31).keys()].map((x) => x + 1);
 
 	let wfhDays = [];
@@ -30,15 +32,21 @@
 	let timestamp = null;
 	let scheduleCount = 0;
 	let hoursPerDay = 7.6;
+	let loading = false;
 
 	onMount(async () => {
+		loading = true;
 		wfhDays = await loadData(fyear);
 		wfhDaysLy = await loadData(fyear - 1);
+		loading = false;
 	});
 
 	const fyearChange = async () => {
+		loading = true;
 		await save();
+		months = getMonths();
 		wfhDays = await loadData(fyear);
+		loading = false;
 	};
 
 	const loadData = async (financialYear) => {
@@ -121,7 +129,7 @@
 	console.log($page.data.session);
 </script>
 
-<div>
+<div class="blue-168">
 	<div>
 		<nav class="tui-nav fixed">
 			<ul>
@@ -179,15 +187,51 @@
 
 	<!-- Overlap -->
 	<div class="tui-overlap" />
+	{#if loading}
+		<div class="center">
+			<div class="tui-modal active">
+				<div class="tui-panel">
+					<div class="tui-panel-header">Loading</div>
+					<div class="tui-panel-content">Loading data. Please wait...</div>
+				</div>
+			</div>
+		</div>
+	{/if}
 
 	<!-- Modal window -->
-	<div id="modal" class="tui-modal">
+	<div id="modal" class="tui-modal center">
 		<div class="tui-window red-168">
 			<fieldset class="tui-fieldset">
 				<legend class="red-255 yellow-255-text">Settings</legend>
-				<label for="hours">Standard work day (hours)</label>
-				<input class="tui-input" type="number" min="0" max="24" bind:value={hoursPerDay} />
-				<button class="tui-button tui-modal-close-button right" data-modal="modal">close</button>
+				<div class="row">
+					<label for="hours">Standard work day (hours)</label>
+					<input
+						id="hours"
+						class="tui-input"
+						type="number"
+						min="0"
+						max="24"
+						bind:value={hoursPerDay}
+					/>
+				</div>
+				<div class="row">
+					<label for="year">Financial Year (for this session)</label>
+					<input
+						id="year"
+						class="tui-input"
+						type="number"
+						min="2020"
+						max="2100"
+						bind:value={fyear}
+					/>
+				</div>
+				<div class="row">
+					<button
+						class="tui-button tui-modal-close-button right"
+						data-modal="modal"
+						on:click={(x) => fyearChange()}>close</button
+					>
+				</div>
 			</fieldset>
 		</div>
 	</div>
