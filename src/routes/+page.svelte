@@ -55,7 +55,7 @@
 	const loadData = async (financialYear) => {
 		const response = await fetch(`/api?fyear=${financialYear}`);
 		const result = await response.json();
-		//console.log(result);
+
 		return result;
 	};
 
@@ -63,7 +63,6 @@
 		const response = await fetch(`/api/holidays?fyear=${financialYear}`);
 		const result = await response.json();
 
-		console.log('holidays are', result);
 		return result;
 	};
 
@@ -77,7 +76,6 @@
 	const handleClick = (mon, day) => {
 		const i = wfhDays.findIndex((x) => x.day == day && x.month == mon.index && x.year == mon.year);
 		if (i >= 0) {
-			//wfhDays.splice(i,1);
 			wfhDays[i].hasChanged = true;
 			wfhDays[i].status = wfhDays[i].status == 0 ? 1 : 0;
 			wfhDays = [...wfhDays];
@@ -107,8 +105,6 @@
 			body: JSON.stringify(toSave)
 		});
 		const result = await response.json();
-		//console.log("Save completed");
-		//console.log(result);
 		scheduleCount--;
 		timestamp = null;
 	};
@@ -121,25 +117,19 @@
 
 	const getClass = (d, m, y, arr) => {
 		const index = arr.findIndex((x) => x.day == d && x.month == m && x.year == y);
-		//console.log(index);
 		if (index >= 0) {
-			//console.log("index greater than one");
 			const row = arr[index];
-			//console.log(row);
 			if (row.status === undefined || row.status == 1) {
-				//console.log("class is home");
 				return 'home';
 			}
 		}
 		const weekday = dayName(d, m, y);
 		if (weekday === 'Sun' || weekday === 'Sat') return 'weekend';
 		if (weekday === '---') return 'none';
-		console.log(holidays);
 		if (holidays.find((x) => x.day == d && (x.month == m) & (x.year == y))) return 'cyan-168';
 
 		return 'office';
 	};
-	console.log($page.data.session);
 </script>
 
 <div class="blue-168">
