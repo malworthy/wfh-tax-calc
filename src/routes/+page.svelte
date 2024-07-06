@@ -29,6 +29,7 @@
 
 	let wfhDays = [];
 	let wfhDaysLy = [];
+	let holidays = [];
 	let timestamp = null;
 	let scheduleCount = 0;
 	let hoursPerDay = 7.6;
@@ -36,6 +37,7 @@
 
 	onMount(async () => {
 		loading = true;
+		holidays = await loadHolidays(fyear);
 		wfhDays = await loadData(fyear);
 		wfhDaysLy = await loadData(fyear - 1);
 		loading = false;
@@ -44,6 +46,7 @@
 	const fyearChange = async () => {
 		loading = true;
 		await save();
+		holidays = await loadHolidays(fyear);
 		months = getMonths();
 		wfhDays = await loadData(fyear);
 		loading = false;
@@ -53,6 +56,14 @@
 		const response = await fetch(`/api?fyear=${financialYear}`);
 		const result = await response.json();
 		//console.log(result);
+		return result;
+	};
+
+	const loadHolidays = async (financialYear) => {
+		const response = await fetch(`/api/holidays?fyear=${financialYear}`);
+		const result = await response.json();
+
+		console.log('holidays are', result);
 		return result;
 	};
 
@@ -123,6 +134,8 @@
 		const weekday = dayName(d, m, y);
 		if (weekday === 'Sun' || weekday === 'Sat') return 'weekend';
 		if (weekday === '---') return 'none';
+		console.log(holidays);
+		if (holidays.find((x) => x.day == d && (x.month == m) & (x.year == y))) return 'cyan-168';
 
 		return 'office';
 	};
@@ -187,10 +200,12 @@
 
 	<!-- Overlap -->
 	<div class="tui-overlap" />
+
+	<!--Loading screen-->
 	{#if loading}
 		<div class="center">
 			<div class="tui-modal active">
-				<div class="tui-panel">
+				<div class="tui-panel yellow-168 black-168-text">
 					<div class="tui-panel-header">Loading</div>
 					<div class="tui-panel-content">Loading data. Please wait...</div>
 				</div>
@@ -247,7 +262,7 @@
 		background-color: blue;
 	}
 	.home {
-		background-color: green;
+		background-color: #00a800;
 	}
 	.none {
 		background-color: white;
